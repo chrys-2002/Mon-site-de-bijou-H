@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { ShopProvider } from "@/context/ShopContext";
+import { SessionProvider } from "next-auth/react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import AnimatedBackground from "@/components/AnimatedBackground";
@@ -20,12 +21,14 @@ export default function RootLayout({
     <html lang="fr" className="dark">
       <body className="bg-black text-white">
         <ThemeProvider>
-          <ShopProvider>
-            <AnimatedBackground />
-            <Header />
-            {children}
-            <Footer />
-          </ShopProvider>
+          <SessionProvider>
+            <ShopProvider>
+              <AnimatedBackground />
+              <Header />
+              {children}
+              <Footer />
+            </ShopProvider>
+          </SessionProvider>
         </ThemeProvider>
       </body>
     </html>

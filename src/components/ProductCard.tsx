@@ -50,7 +50,7 @@ export default function ProductCard({ produit }: ProductCardProps) {
             <p className="text-xs text-gray-500 uppercase tracking-widest mb-2">{produit.categorie}</p>
             <h3 className="text-lg font-semibold mb-2">{produit.nom}</h3>
             <p className="text-gray-500 text-sm mb-4 line-clamp-2">{produit.description}</p>
-            <p className="text-2xl font-bold gradient-text">{formatCFA(produit.prix)}</p>
+            <p className="text-2xl font-bold gradient-text">{formatCFA((produit as any).price ?? produit.prix)}</p>
           </div>
         </motion.div>
       </Link>
