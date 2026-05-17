@@ -9,6 +9,7 @@ import { useAuth } from "@/hooks/useAuth";
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
   const { cartCount, favoritesCount } = useShop();
   const { user, logout, isLoggedIn } = useAuth();
 
@@ -47,17 +48,19 @@ export default function Header() {
           </Link>
 
           {isLoggedIn ? (
-            <div className="relative group">
-              <button className={iconClass} title={user?.name || "Compte"}>
+            <div className="relative">
+              <button onClick={() => setProfileOpen(!profileOpen)} className={iconClass} title={user?.name || "Compte"}>
                 <span className="text-sm font-medium">👤 {user?.name?.split(" ")[0]}</span>
               </button>
-              <div className="absolute right-0 top-full mt-2 glass rounded-xl p-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 min-w-[150px] shadow-lg z-50">
-                <Link href="/profil" className="block px-4 py-2 text-sm rounded-lg hover:bg-white/10">Mon Profil</Link>
-                <Link href="/profil/commandes" className="block px-4 py-2 text-sm rounded-lg hover:bg-white/10">Mes Commandes</Link>
-                <Link href="/admin" className="block px-4 py-2 text-sm rounded-lg hover:bg-white/10">⚙️ Dashboard</Link>
-                <hr className="my-1 border-[var(--border)]" />
-                <button onClick={logout} className="block w-full text-left px-4 py-2 text-sm text-red-400 rounded-lg hover:bg-white/10">Déconnexion</button>
-              </div>
+              {profileOpen && (
+                <div className="absolute right-0 top-full mt-2 glass rounded-xl p-2 min-w-[150px] shadow-lg z-50">
+                  <Link href="/profil" onClick={() => setProfileOpen(false)} className="block px-4 py-2 text-sm rounded-lg hover:bg-white/10">Mon Profil</Link>
+                  <Link href="/profil/commandes" onClick={() => setProfileOpen(false)} className="block px-4 py-2 text-sm rounded-lg hover:bg-white/10">Mes Commandes</Link>
+                  <Link href="/admin" onClick={() => setProfileOpen(false)} className="block px-4 py-2 text-sm rounded-lg hover:bg-white/10">⚙️ Dashboard</Link>
+                  <hr className="my-1 border-[var(--border)]" />
+                  <button onClick={() => { logout(); setProfileOpen(false); }} className="block w-full text-left px-4 py-2 text-sm text-red-400 rounded-lg hover:bg-white/10">Déconnexion</button>
+                </div>
+              )}
             </div>
           ) : (
             <Link href="/auth/login" className={iconClass} title="Compte">
