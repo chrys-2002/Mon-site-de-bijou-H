@@ -23,8 +23,8 @@ export default function Header() {
       className="fixed top-0 w-full z-50 glass-dark"
     >
       <nav className="max-w-7xl mx-auto px-4 md:px-6 h-16 md:h-20 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2 flex-shrink-0">
-          <img src="/logo.png" alt="ICE-BI" className="h-12 md:h-16 w-auto" />
+        <Link href="/" className="text-xl md:text-2xl font-bold tracking-wider gradient-text">
+          ICE-BI
         </Link>
 
         <div className="hidden lg:flex items-center space-x-1">
