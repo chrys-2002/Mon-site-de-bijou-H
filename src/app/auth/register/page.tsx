@@ -41,8 +41,21 @@ export default function RegisterPage() {
       });
       const data = await res.json();
       if (res.ok) {
-        setSuccess("Compte créé ! Redirection...");
-        setTimeout(() => { window.location.href = "/"; }, 1000);
+        setSuccess("Compte créé ! Connexion automatique...");
+        
+        // Connexion automatique
+        const loginRes = await fetch("/api/auth/login-email", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
+        });
+        const loginData = await loginRes.json();
+        if (loginRes.ok) {
+          localStorage.setItem("token", loginData.token);
+          localStorage.setItem("user", JSON.stringify(loginData.user));
+        }
+        
+        setTimeout(() => { window.location.href = "/"; }, 500);
       } else {
         setError(data.error || "Erreur lors de l'inscription");
       }
