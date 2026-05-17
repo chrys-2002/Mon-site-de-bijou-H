@@ -8,6 +8,8 @@ export default function RegisterPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
@@ -27,7 +29,6 @@ export default function RegisterPage() {
     setError("");
     setSuccess("");
 
-    // Validation du mot de passe
     const passwordError = validatePassword(password);
     if (passwordError) {
       setError(passwordError);
@@ -35,7 +36,6 @@ export default function RegisterPage() {
       return;
     }
 
-    // Vérifier que les mots de passe correspondent
     if (password !== confirmPassword) {
       setError("Les mots de passe ne correspondent pas");
       setLoading(false);
@@ -48,23 +48,21 @@ export default function RegisterPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, email, password }),
       });
-
       const data = await res.json();
-
       if (res.ok) {
         setSuccess("Compte créé ! Redirection...");
-        setTimeout(() => {
-          window.location.href = "/";
-        }, 1000);
+        setTimeout(() => { window.location.href = "/"; }, 1000);
       } else {
         setError(data.error || "Erreur lors de l'inscription");
       }
-    } catch (err: any) {
+    } catch {
       setError("Impossible de contacter le serveur.");
     } finally {
       setLoading(false);
     }
   };
+
+  const inputClass = "w-full bg-[var(--bg-card)] border border-[var(--border)] text-[var(--text)] px-4 py-3 rounded-xl focus:outline-none pr-12";
 
   return (
     <main className="min-h-screen pt-20 flex items-center justify-center px-4 bg-[var(--bg)]">
@@ -73,37 +71,46 @@ export default function RegisterPage() {
           <h1 className="text-3xl font-bold mb-2 text-center text-[var(--text)]">Inscription</h1>
           <p className="text-[var(--text-secondary)] text-center mb-8">Rejoignez la communauté ICE-BI</p>
 
-          {error && (
-            <div className="bg-red-500/10 border border-red-500 text-red-500 p-3 rounded-xl mb-6 text-sm">{error}</div>
-          )}
-          {success && (
-            <div className="bg-green-500/10 border border-green-500 text-green-500 p-3 rounded-xl mb-6 text-sm">{success}</div>
-          )}
+          {error && <div className="bg-red-500/10 border border-red-500 text-red-500 p-3 rounded-xl mb-6 text-sm">{error}</div>}
+          {success && <div className="bg-green-500/10 border border-green-500 text-green-500 p-3 rounded-xl mb-6 text-sm">{success}</div>}
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
               <label className="block text-sm font-medium mb-2 text-[var(--text)]">Nom complet</label>
-              <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Jean Dupont"
-                className="w-full bg-[var(--bg-card)] border border-[var(--border)] text-[var(--text)] px-4 py-3 rounded-xl focus:outline-none" required />
+              <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Jean Dupont" className={inputClass} required />
             </div>
             <div>
               <label className="block text-sm font-medium mb-2 text-[var(--text)]">Email</label>
-              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="votre@email.com"
-                className="w-full bg-[var(--bg-card)] border border-[var(--border)] text-[var(--text)] px-4 py-3 rounded-xl focus:outline-none" required />
+              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="votre@email.com" className={inputClass} required />
             </div>
             <div>
               <label className="block text-sm font-medium mb-2 text-[var(--text)]">Mot de passe</label>
-              <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••"
-                className="w-full bg-[var(--bg-card)] border border-[var(--border)] text-[var(--text)] px-4 py-3 rounded-xl focus:outline-none" required />
-              <p className="text-[var(--text-secondary)] text-xs mt-1">Min. 8 caractères, 1 majuscule, 1 minuscule, 1 chiffre, 1 caractère spécial</p>
+              <div className="relative">
+                <input type={showPassword ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" className={inputClass} required />
+                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-secondary)] hover:text-[var(--text)]">
+                  {showPassword ? (
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M15 12a3 3 0 01-3 3m0 0a3 3 0 01-3-3m3 3V6m0 12v-3m6.36 1.64l-1.28-1.28M6.72 6.72l-1.28-1.28M21 12a9.97 9.97 0 01-1.457 3.543M3 12a9.97 9.97 0 013.457-3.543M12 3v3" /></svg>
+                  ) : (
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                  )}
+                </button>
+              </div>
+              <p className="text-[var(--text-secondary)] text-xs mt-1">Min. 8 caractères, 1 majuscule, 1 chiffre, 1 caractère spécial</p>
             </div>
             <div>
               <label className="block text-sm font-medium mb-2 text-[var(--text)]">Confirmer le mot de passe</label>
-              <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="••••••••"
-                className="w-full bg-[var(--bg-card)] border border-[var(--border)] text-[var(--text)] px-4 py-3 rounded-xl focus:outline-none" required />
+              <div className="relative">
+                <input type={showConfirm ? "text" : "password"} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="••••••••" className={inputClass} required />
+                <button type="button" onClick={() => setShowConfirm(!showConfirm)} className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-secondary)] hover:text-[var(--text)]">
+                  {showConfirm ? (
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M15 12a3 3 0 01-3 3m0 0a3 3 0 01-3-3m3 3V6m0 12v-3m6.36 1.64l-1.28-1.28M6.72 6.72l-1.28-1.28M21 12a9.97 9.97 0 01-1.457 3.543M3 12a9.97 9.97 0 013.457-3.543M12 3v3" /></svg>
+                  ) : (
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                  )}
+                </button>
+              </div>
             </div>
-            <button type="submit" disabled={loading}
-              className="w-full bg-[var(--text)] text-[var(--bg)] py-3 rounded-full font-semibold hover:opacity-80 transition disabled:opacity-50">
+            <button type="submit" disabled={loading} className="w-full bg-[var(--text)] text-[var(--bg)] py-3 rounded-full font-semibold hover:opacity-80 transition disabled:opacity-50">
               {loading ? "Création..." : "Créer un compte"}
             </button>
           </form>
