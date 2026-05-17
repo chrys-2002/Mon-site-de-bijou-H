@@ -2,10 +2,8 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 
 export default function RegisterPage() {
-  const router = useRouter();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -31,13 +29,13 @@ export default function RegisterPage() {
       if (res.ok) {
         setSuccess("Compte créé ! Redirection...");
         setTimeout(() => {
-          router.push("/auth/login?registered=true");
+          window.location.href = "/";
         }, 1000);
       } else {
         setError(data.error || "Erreur lors de l'inscription");
       }
     } catch (err: any) {
-      setError("Impossible de contacter le serveur. Vérifiez votre connexion.");
+      setError("Impossible de contacter le serveur.");
     } finally {
       setLoading(false);
     }
@@ -51,15 +49,10 @@ export default function RegisterPage() {
           <p className="text-[var(--text-secondary)] text-center mb-8">Rejoignez la communauté ICE-BI</p>
 
           {error && (
-            <div className="bg-red-500/10 border border-red-500 text-red-500 p-3 rounded-xl mb-6 text-sm">
-              {error}
-            </div>
+            <div className="bg-red-500/10 border border-red-500 text-red-500 p-3 rounded-xl mb-6 text-sm">{error}</div>
           )}
-
           {success && (
-            <div className="bg-green-500/10 border border-green-500 text-green-500 p-3 rounded-xl mb-6 text-sm">
-              {success}
-            </div>
+            <div className="bg-green-500/10 border border-green-500 text-green-500 p-3 rounded-xl mb-6 text-sm">{success}</div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-5">
@@ -68,19 +61,16 @@ export default function RegisterPage() {
               <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Jean Dupont"
                 className="w-full bg-[var(--bg-card)] border border-[var(--border)] text-[var(--text)] px-4 py-3 rounded-xl focus:outline-none" required />
             </div>
-
             <div>
               <label className="block text-sm font-medium mb-2 text-[var(--text)]">Email</label>
               <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="votre@email.com"
                 className="w-full bg-[var(--bg-card)] border border-[var(--border)] text-[var(--text)] px-4 py-3 rounded-xl focus:outline-none" required />
             </div>
-
             <div>
               <label className="block text-sm font-medium mb-2 text-[var(--text)]">Mot de passe</label>
               <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••"
                 className="w-full bg-[var(--bg-card)] border border-[var(--border)] text-[var(--text)] px-4 py-3 rounded-xl focus:outline-none" required />
             </div>
-
             <button type="submit" disabled={loading}
               className="w-full bg-[var(--text)] text-[var(--bg)] py-3 rounded-full font-semibold hover:opacity-80 transition disabled:opacity-50">
               {loading ? "Création..." : "Créer un compte"}
@@ -88,8 +78,7 @@ export default function RegisterPage() {
           </form>
 
           <p className="text-center text-[var(--text-secondary)] mt-8">
-            Déjà un compte ?{" "}
-            <Link href="/auth/login" className="text-[var(--text)] hover:underline font-semibold">Se connecter</Link>
+            Déjà un compte ? <Link href="/auth/login" className="text-[var(--text)] hover:underline font-semibold">Se connecter</Link>
           </p>
         </div>
       </div>
