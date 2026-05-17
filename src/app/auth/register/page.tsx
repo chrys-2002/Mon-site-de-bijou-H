@@ -7,15 +7,40 @@ export default function RegisterPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const validatePassword = (pwd: string): string | null => {
+    if (pwd.length < 8) return "Le mot de passe doit contenir au moins 8 caractères";
+    if (!/[A-Z]/.test(pwd)) return "Le mot de passe doit contenir au moins une majuscule";
+    if (!/[a-z]/.test(pwd)) return "Le mot de passe doit contenir au moins une minuscule";
+    if (!/[0-9]/.test(pwd)) return "Le mot de passe doit contenir au moins un chiffre";
+    if (!/[!@#$%^&*(),.?":{}|<>]/.test(pwd)) return "Le mot de passe doit contenir au moins un caractère spécial";
+    return null;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError("");
     setSuccess("");
+
+    // Validation du mot de passe
+    const passwordError = validatePassword(password);
+    if (passwordError) {
+      setError(passwordError);
+      setLoading(false);
+      return;
+    }
+
+    // Vérifier que les mots de passe correspondent
+    if (password !== confirmPassword) {
+      setError("Les mots de passe ne correspondent pas");
+      setLoading(false);
+      return;
+    }
 
     try {
       const res = await fetch("/api/auth/register-email", {
@@ -69,6 +94,12 @@ export default function RegisterPage() {
             <div>
               <label className="block text-sm font-medium mb-2 text-[var(--text)]">Mot de passe</label>
               <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••"
+                className="w-full bg-[var(--bg-card)] border border-[var(--border)] text-[var(--text)] px-4 py-3 rounded-xl focus:outline-none" required />
+              <p className="text-[var(--text-secondary)] text-xs mt-1">Min. 8 caractères, 1 majuscule, 1 minuscule, 1 chiffre, 1 caractère spécial</p>
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2 text-[var(--text)]">Confirmer le mot de passe</label>
+              <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="••••••••"
                 className="w-full bg-[var(--bg-card)] border border-[var(--border)] text-[var(--text)] px-4 py-3 rounded-xl focus:outline-none" required />
             </div>
             <button type="submit" disabled={loading}
