@@ -40,10 +40,7 @@ export default function FavorisPage() {
           <div className="glass rounded-2xl p-12 text-center">
             <span className="text-6xl mb-6 block">🤍</span>
             <h2 className="text-2xl font-bold mb-4">Aucun favori</h2>
-            <Link
-              href="/collection"
-              className="inline-block bg-[var(--text)] text-[var(--bg)] px-8 py-3 rounded-full font-semibold hover:opacity-80 transition"
-            >
+            <Link href="/collection" className="inline-block bg-[var(--text)] text-[var(--bg)] px-8 py-3 rounded-full font-semibold">
               Découvrir la collection
             </Link>
           </div>
