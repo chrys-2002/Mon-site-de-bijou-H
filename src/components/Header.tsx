@@ -11,7 +11,7 @@ export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const { cartCount, favoritesCount } = useShop();
-  const { user, logout, isLoggedIn } = useAuth();
+  const { user, logout, isLoggedIn, isAdmin } = useAuth();
 
   const linkClass = "px-4 py-2 text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text)] transition-colors duration-300";
   const iconClass = "p-2 text-[var(--text-secondary)] hover:text-[var(--text)] transition-colors duration-300 relative inline-flex items-center";
@@ -56,7 +56,9 @@ export default function Header() {
                 <div className="absolute right-0 top-full mt-2 glass rounded-xl p-2 min-w-[150px] shadow-lg z-50">
                   <Link href="/profil" onClick={() => setProfileOpen(false)} className="block px-4 py-2 text-sm rounded-lg hover:bg-white/10">Mon Profil</Link>
                   <Link href="/profil/commandes" onClick={() => setProfileOpen(false)} className="block px-4 py-2 text-sm rounded-lg hover:bg-white/10">Mes Commandes</Link>
-                  <Link href="/admin" onClick={() => setProfileOpen(false)} className="block px-4 py-2 text-sm rounded-lg hover:bg-white/10">⚙️ Dashboard</Link>
+                  {isAdmin && (
+                    <Link href="/admin" onClick={() => setProfileOpen(false)} className="block px-4 py-2 text-sm rounded-lg hover:bg-white/10">⚙️ Dashboard</Link>
+                  )}
                   <hr className="my-1 border-[var(--border)]" />
                   <button onClick={() => { logout(); setProfileOpen(false); }} className="block w-full text-left px-4 py-2 text-sm text-red-400 rounded-lg hover:bg-white/10">Déconnexion</button>
                 </div>
@@ -102,7 +104,9 @@ export default function Header() {
               {isLoggedIn ? (
                 <>
                   <Link href="/profil" onClick={() => setMenuOpen(false)} className="px-4 py-3 rounded-xl">👤 {user?.name}</Link>
-                  <Link href="/admin" onClick={() => setMenuOpen(false)} className="px-4 py-3 rounded-xl">⚙️ Dashboard</Link>
+                  {isAdmin && (
+                    <Link href="/admin" onClick={() => setMenuOpen(false)} className="px-4 py-3 rounded-xl">⚙️ Dashboard</Link>
+                  )}
                   <button onClick={() => { logout(); setMenuOpen(false); }} className="px-4 py-3 rounded-xl text-red-400 text-left">🚪 Déconnexion</button>
                 </>
               ) : (

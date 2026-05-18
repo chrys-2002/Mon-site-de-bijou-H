@@ -8,18 +8,34 @@ interface User {
   name?: string | null;
   email?: string | null;
   image?: string | null;
+  role?: string;
 }
 
 export function useAuth() {
   const { data: session, status } = useSession();
   const [localUser, setLocalUser] = useState<User | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
-      try { setLocalUser(JSON.parse(storedUser)); } catch {}
+      try {
+        const parsed = JSON.parse(storedUser);
+        setLocalUser(parsed);
+      } catch {}
     }
   }, []);
+
+  // Vérifier si l'utilisateur est admin
+  useEffect(() => {
+    const email = session?.user?.email || localUser?.email;
+    if (email) {
+      fetch("/api/admin/check")
+        .then((res) => res.json())
+        .then((data) => setIsAdmin(data.isAdmin))
+        .catch(() => setIsAdmin(false));
+    }
+  }, [session, localUser]);
 
   const user = session?.user || localUser;
   const isLoggedIn = status === "authenticated" || !!localUser;
@@ -28,8 +44,9 @@ export function useAuth() {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     setLocalUser(null);
+    setIsAdmin(false);
     signOut({ callbackUrl: "/" });
   };
 
-  return { user, loading: status === "loading", logout, isLoggedIn };
+  return { user, loading: status === "loading", logout, isLoggedIn, isAdmin };
 }
