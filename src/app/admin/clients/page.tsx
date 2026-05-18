@@ -46,7 +46,8 @@ export default function AdminClientsPage() {
           <span className="text-[var(--text-secondary)]">{users.length} client(s)</span>
         </div>
 
-        <div className="glass rounded-2xl overflow-hidden">
+        {/* Version desktop (tableau) */}
+        <div className="hidden md:block glass rounded-2xl overflow-hidden">
           <table className="w-full">
             <thead>
               <tr className="border-b border-[var(--border)]">
@@ -60,7 +61,7 @@ export default function AdminClientsPage() {
               {users.map((user) => (
                 <tr key={user.id} className="border-b border-[var(--border)]">
                   <td className="p-4">{user.name || "N/A"}</td>
-                  <td className="p-4 text-[var(--text-secondary)]">{user.email}</td>
+                  <td className="p-4 text-[var(--text-secondary)] text-sm">{user.email}</td>
                   <td className="p-4">
                     <span className={`px-2 py-1 rounded-full text-xs ${
                       user.role === "admin" ? "bg-purple-500/20 text-purple-400" : "bg-gray-500/20 text-gray-400"
@@ -73,6 +74,24 @@ export default function AdminClientsPage() {
               ))}
             </tbody>
           </table>
+        </div>
+
+        {/* Version mobile (cartes) */}
+        <div className="md:hidden space-y-4">
+          {users.map((user) => (
+            <div key={user.id} className="glass rounded-2xl p-4">
+              <div className="flex items-center justify-between mb-2">
+                <span className="font-medium">{user.name || "N/A"}</span>
+                <span className={`px-2 py-1 rounded-full text-xs ${
+                  user.role === "admin" ? "bg-purple-500/20 text-purple-400" : "bg-gray-500/20 text-gray-400"
+                }`}>
+                  {user.role}
+                </span>
+              </div>
+              <p className="text-[var(--text-secondary)] text-sm truncate">{user.email}</p>
+              <p className="text-[var(--text-secondary)] text-xs mt-1">{formatDate(user.createdAt)}</p>
+            </div>
+          ))}
         </div>
       </div>
     </main>
