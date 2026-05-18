@@ -66,14 +66,14 @@ export default function Home() {
               </motion.button>
             </Link>
             <Link href="/bracelets">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="border border-gray-600 text-white px-10 py-4 rounded-full font-semibold text-lg hover:bg-white hover:text-black transition-all"
-              >
-                Découvrir
-              </motion.button>
-            </Link>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="border-2 border-[var(--text)] text-[var(--text)] px-10 py-4 rounded-full font-semibold text-lg hover:bg-[var(--text)] hover:text-[var(--bg)] transition-all"
+                >
+                  Découvrir
+                </motion.button>
+              </Link>
           </motion.div>
         </div>
 
