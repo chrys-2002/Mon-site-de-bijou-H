@@ -16,13 +16,15 @@ export default function ProductCard({ produit }: ProductCardProps) {
 
   return (
     <div className="relative group">
+      {/* Bouton favori - toujours visible sur mobile */}
       <button
         onClick={(e) => {
           e.preventDefault();
           e.stopPropagation();
           toggleFavorite(produit.id);
         }}
-        className="absolute top-3 right-3 z-10 p-2 rounded-full bg-black/40 hover:bg-black/60 transition opacity-0 group-hover:opacity-100"
+        className="absolute top-3 right-3 z-10 p-2 rounded-full bg-black/40 hover:bg-black/60 transition md:opacity-0 md:group-hover:opacity-100 opacity-100"
+        title={favori ? "Retirer des favoris" : "Ajouter aux favoris"}
       >
         <svg className="w-5 h-5" fill={favori ? "#ef4444" : "none"} stroke={favori ? "#ef4444" : "white"} viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
