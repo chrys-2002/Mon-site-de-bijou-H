@@ -3,7 +3,7 @@
 import { useShop } from "@/context/ShopContext";
 import { motion } from "framer-motion";
 
-export default function FavoriteButton({ produitId }: { produitId: number }) {
+export default function FavoriteButton({ produitId }: { produitId: string }) {
   const { isFavorite, toggleFavorite } = useShop();
   const favorite = isFavorite(produitId);
 

@@ -1,15 +1,15 @@
 import { prisma } from "@/lib/prisma";
+import { requireAdmin } from "@/lib/admin-guard";
 import { NextResponse } from "next/server";
 
 export async function GET() {
-  try {
-    const [products, users, orders] = await Promise.all([
-      prisma.product.count(),
-      prisma.user.count(),
-      prisma.order.count(),
-    ]);
-    return NextResponse.json({ products, users, orders });
-  } catch (error) {
-    return NextResponse.json({ products: 0, users: 0, orders: 0 });
-  }
+  const admin = await requireAdmin();
+  if (!admin) return NextResponse.json({ error: "Accès refusé" }, { status: 403 });
+
+  const [products, users, orders] = await Promise.all([
+    prisma.product.count(),
+    prisma.user.count(),
+    prisma.order.count(),
+  ]);
+  return NextResponse.json({ products, users, orders });
 }

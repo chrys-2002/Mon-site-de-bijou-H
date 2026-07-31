@@ -3,6 +3,7 @@
 import { useShop } from "@/context/ShopContext";
 import { formatCFA } from "@/lib/utils";
 import Link from "next/link";
+import { BagIcon } from "@/components/icons";
 
 export default function PanierPage() {
   const { cart, removeFromCart, cartCount, cartTotal } = useShop();
@@ -13,7 +14,9 @@ export default function PanierPage() {
         <div className="max-w-4xl mx-auto px-4 py-12">
           <h1 className="text-4xl font-bold mb-8">Mon Panier</h1>
           <div className="glass rounded-2xl p-12 text-center">
-            <span className="text-6xl mb-6 block">🛒</span>
+            <div className="w-16 h-16 mx-auto mb-6 rounded-2xl flex items-center justify-center border border-[#e8c47a]/30 text-[#e8c47a] bg-[#e8c47a]/5">
+              <BagIcon className="w-8 h-8" />
+            </div>
             <h2 className="text-2xl font-bold mb-4">Votre panier est vide</h2>
             <p className="text-[var(--text-secondary)] mb-8">Découvrez notre collection</p>
             <Link
@@ -36,29 +39,24 @@ export default function PanierPage() {
 
         <div className="space-y-4 mb-8">
           {cart.map((item) => {
-            const img = item.produit.image || (item.produit as any).image;
-            const nom = item.produit.nom || (item.produit as any).name;
-            const matiere = item.produit.matiere || (item.produit as any).material || "";
-            const prix = item.produit.prix ?? (item.produit as any).price;
-
             return (
-              <div key={item.produit.id} className="glass rounded-2xl p-6 flex items-center gap-6">
+              <div key={item.product.id} className="glass rounded-2xl p-6 flex items-center gap-6">
                 <div className="w-20 h-20 bg-[var(--bg-card)] rounded-xl overflow-hidden flex-shrink-0">
                   <img
-                    src={img}
-                    alt={nom}
+                    src={item.product.image}
+                    alt={item.product.name}
                     className="w-full h-full object-cover"
                   />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-semibold truncate">{nom}</h3>
-                  {matiere && <p className="text-[var(--text-secondary)] text-sm">{matiere}</p>}
-                  <p className="text-[var(--text-secondary)] text-sm">Quantité : {item.quantite}</p>
+                  <h3 className="font-semibold truncate">{item.product.name}</h3>
+                  {item.product.material && <p className="text-[var(--text-secondary)] text-sm">{item.product.material}</p>}
+                  <p className="text-[var(--text-secondary)] text-sm">Quantité : {item.quantity}</p>
                 </div>
                 <div className="text-right flex-shrink-0">
-                  <p className="text-xl font-bold">{formatCFA(prix * item.quantite)}</p>
+                  <p className="text-xl font-bold">{formatCFA(item.product.price * item.quantity)}</p>
                   <button
-                    onClick={() => removeFromCart(item.produit.id)}
+                    onClick={() => removeFromCart(item.product.id)}
                     className="text-red-400 hover:text-red-300 text-sm mt-2 transition"
                   >
                     Supprimer

@@ -3,10 +3,10 @@
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import ProductCard from "@/components/ProductCard";
-import { Produit } from "@/data/produits";
+import { Product } from "@/types/product";
 
 export default function BaguesPage() {
-  const [products, setProducts] = useState<Produit[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

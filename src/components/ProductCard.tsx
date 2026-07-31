@@ -2,12 +2,12 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { Produit } from "@/data/produits";
+import { Product } from "@/types/product";
 import { useShop } from "@/context/ShopContext";
 import { formatCFA } from "@/lib/utils";
 
 interface ProductCardProps {
-  produit: Produit;
+  produit: Product;
 }
 
 export default function ProductCard({ produit }: ProductCardProps) {
@@ -42,17 +42,17 @@ export default function ProductCard({ produit }: ProductCardProps) {
           <div className="h-72 bg-gray-900 relative overflow-hidden">
             <img
               src={produit.image}
-              alt={produit.nom}
+              alt={produit.name}
               className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
           </div>
 
           <div className="p-6">
-            <p className="text-xs text-gray-500 uppercase tracking-widest mb-2">{produit.categorie}</p>
-            <h3 className="text-lg font-semibold mb-2">{produit.nom}</h3>
+            <p className="text-xs text-gray-500 uppercase tracking-widest mb-2">{produit.category}</p>
+            <h3 className="text-lg font-semibold mb-2">{produit.name}</h3>
             <p className="text-gray-500 text-sm mb-4 line-clamp-2">{produit.description}</p>
-            <p className="text-2xl font-bold gradient-text">{formatCFA((produit as any).price ?? produit.prix)}</p>
+            <p className="text-2xl font-bold gradient-text">{formatCFA(produit.price)}</p>
           </div>
         </motion.div>
       </Link>

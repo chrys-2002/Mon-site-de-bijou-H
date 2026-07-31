@@ -4,6 +4,7 @@ import { useAuth } from "@/hooks/useAuth";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { UserIcon } from "@/components/icons";
 
 export default function ProfilPage() {
   const { user, isLoggedIn, loading } = useAuth();
@@ -40,8 +41,8 @@ export default function ProfilPage() {
           <div className="md:col-span-1">
             <div className="glass rounded-2xl p-6">
               <div className="text-center mb-6">
-                <div className="w-20 h-20 bg-[var(--bg-card)] rounded-full mx-auto flex items-center justify-center text-3xl mb-4">
-                  👤
+                <div className="w-20 h-20 rounded-full mx-auto flex items-center justify-center mb-4 border border-[#e8c47a]/30 text-[#e8c47a] bg-[#e8c47a]/5">
+                  <UserIcon className="w-8 h-8" />
                 </div>
                 <h3 className="font-bold">{user.name || "Utilisateur"}</h3>
                 <p className="text-[var(--text-secondary)] text-sm">{user.email}</p>

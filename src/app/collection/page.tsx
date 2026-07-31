@@ -3,10 +3,10 @@
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import ProductCard from "@/components/ProductCard";
-import { Produit } from "@/data/produits";
+import { Product } from "@/types/product";
 
 export default function CollectionPage() {
-  const [products, setProducts] = useState<Produit[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -38,7 +38,7 @@ export default function CollectionPage() {
           <p className="text-center text-[var(--text-secondary)]">Chargement...</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {products.map((produit: any) => (
+            {products.map((produit) => (
               <ProductCard key={produit.id} produit={produit} />
             ))}
           </div>

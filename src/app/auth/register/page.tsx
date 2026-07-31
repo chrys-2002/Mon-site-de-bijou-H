@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { signIn } from "next-auth/react";
+import { EyeIcon, EyeOffIcon } from "@/components/icons";
 
 export default function RegisterPage() {
   const [name, setName] = useState("");
@@ -42,19 +44,7 @@ export default function RegisterPage() {
       const data = await res.json();
       if (res.ok) {
         setSuccess("Compte créé ! Connexion automatique...");
-        
-        // Connexion automatique
-        const loginRes = await fetch("/api/auth/login-email", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password }),
-        });
-        const loginData = await loginRes.json();
-        if (loginRes.ok) {
-          localStorage.setItem("token", loginData.token);
-          localStorage.setItem("user", JSON.stringify(loginData.user));
-        }
-        
+        await signIn("credentials", { email, password, redirect: false });
         setTimeout(() => { window.location.href = "/"; }, 500);
       } else {
         setError(data.error || "Erreur lors de l'inscription");
@@ -92,7 +82,7 @@ export default function RegisterPage() {
               <div className="relative">
                 <input type={showPassword ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" className={inputClass} required />
                 <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-secondary)] hover:text-[var(--text)]">
-                  {showPassword ? "🙈" : "👁️"}
+                  {showPassword ? <EyeOffIcon className="w-5 h-5" /> : <EyeIcon className="w-5 h-5" />}
                 </button>
               </div>
               <p className="text-[var(--text-secondary)] text-xs mt-1">Min. 8 caractères, 1 majuscule, 1 chiffre, 1 caractère spécial</p>
@@ -102,7 +92,7 @@ export default function RegisterPage() {
               <div className="relative">
                 <input type={showConfirm ? "text" : "password"} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="••••••••" className={inputClass} required />
                 <button type="button" onClick={() => setShowConfirm(!showConfirm)} className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-secondary)] hover:text-[var(--text)]">
-                  {showConfirm ? "🙈" : "👁️"}
+                  {showConfirm ? <EyeOffIcon className="w-5 h-5" /> : <EyeIcon className="w-5 h-5" />}
                 </button>
               </div>
             </div>

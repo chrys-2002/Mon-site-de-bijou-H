@@ -5,12 +5,8 @@ import { formatDate } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { MailIcon } from "@/components/icons";
 
-<a href="/admin/contacts" className="glass rounded-2xl p-6 hover:bg-[var(--bg-card)] transition block">
-  <span className="text-4xl mb-4 block">📧</span>
-  <h3 className="text-xl font-bold mb-2">Messages</h3>
-  <p className="text-[var(--text-secondary)]">Voir les messages clients</p>
-</a>
 
 
 export default function AdminContactsPage() {
@@ -35,7 +31,9 @@ export default function AdminContactsPage() {
 
         {contacts.length === 0 ? (
           <div className="glass rounded-2xl p-12 text-center">
-            <span className="text-6xl mb-6 block">📧</span>
+            <div className="w-16 h-16 mx-auto mb-6 rounded-2xl flex items-center justify-center border border-[#e8c47a]/30 text-[#e8c47a] bg-[#e8c47a]/5">
+              <MailIcon className="w-8 h-8" />
+            </div>
             <p className="text-[var(--text-secondary)]">Aucun message</p>
           </div>
         ) : (

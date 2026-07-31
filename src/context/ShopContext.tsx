@@ -1,36 +1,44 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import { Produit } from "@/data/produits";
-
-interface CartItem {
-  produit: Produit;
-  quantite: number;
-}
+import { useSession } from "next-auth/react";
+import { Product, CartItem } from "@/types/product";
+import AuthRequiredModal from "@/components/AuthRequiredModal";
 
 interface ShopContextType {
   cart: CartItem[];
-  addToCart: (produit: Produit) => void;
-  removeFromCart: (produitId: number) => void;
+  /** Retourne false si l'utilisateur n'est pas connecté (le popup s'affiche) */
+  addToCart: (product: Product) => boolean;
+  removeFromCart: (productId: string) => void;
   clearCart: () => void;
   cartCount: number;
   cartTotal: number;
-  favorites: number[];
-  toggleFavorite: (produitId: number) => void;
-  isFavorite: (produitId: number) => boolean;
+  favorites: string[];
+  toggleFavorite: (productId: string) => void;
+  isFavorite: (productId: string) => boolean;
   favoritesCount: number;
 }
 
 const ShopContext = createContext<ShopContextType | null>(null);
 
 export function ShopProvider({ children }: { children: ReactNode }) {
+  const { status } = useSession();
   const [mounted, setMounted] = useState(false);
   const [cart, setCart] = useState<CartItem[]>([]);
-  const [favorites, setFavorites] = useState<number[]>([]);
+  const [favorites, setFavorites] = useState<string[]>([]);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
 
   useEffect(() => {
     const savedFavorites = localStorage.getItem("ice-bi-favorites");
-    if (savedFavorites) try { setFavorites(JSON.parse(savedFavorites)); } catch (e) {}
+    if (savedFavorites) {
+      try {
+        const parsed = JSON.parse(savedFavorites);
+        // Ignore les anciens favoris numériques (ancien format)
+        if (Array.isArray(parsed)) {
+          setFavorites(parsed.filter((id) => typeof id === "string"));
+        }
+      } catch {}
+    }
     setMounted(true);
   }, []);
 
@@ -38,85 +46,85 @@ export function ShopProvider({ children }: { children: ReactNode }) {
     if (mounted) localStorage.setItem("ice-bi-favorites", JSON.stringify(favorites));
   }, [favorites, mounted]);
 
+  // Charge le panier serveur (si connecté) au montage
   useEffect(() => {
-    if (mounted) {
-      fetch("/api/cart")
-        .then((res) => res.json())
-        .then((data) => {
-          if (Array.isArray(data)) {
-            const items = data.map((item: any) => ({
-              produit: {
-                id: item.product.id,
-                nom: item.product.name,
-                categorie: item.product.category,
-                prix: item.product.price,
-                description: item.product.description,
-                image: item.product.image,
-                matiere: item.product.material,
-              },
-              quantite: item.quantity,
-            }));
-            setCart(items);
-          }
-        })
-        .catch(() => {});
-    }
+    if (!mounted) return;
+    fetch("/api/cart")
+      .then((res) => (res.ok ? res.json() : []))
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) {
+          setCart(
+            data.map((item: { product: Product; quantity: number }) => ({
+              product: item.product,
+              quantity: item.quantity,
+            }))
+          );
+        }
+      })
+      .catch(() => {});
   }, [mounted]);
 
-  const addToCart = async (produit: Produit) => {
+  const addToCart = (product: Product): boolean => {
+    // Client non connecté : popup "Connexion requise", rien n'est ajouté
+    if (status !== "authenticated") {
+      setAuthModalOpen(true);
+      return false;
+    }
+
     setCart((prev) => {
-      const existing = prev.find((item) => item.produit.id === produit.id);
+      const existing = prev.find((item) => item.product.id === product.id);
       if (existing) {
         return prev.map((item) =>
-          item.produit.id === produit.id ? { ...item, quantite: item.quantite + 1 } : item
+          item.product.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
         );
       }
-      return [...prev, { produit, quantite: 1 }];
+      return [...prev, { product, quantity: 1 }];
     });
 
-    try {
-      await fetch("/api/cart", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ productId: produit.id, quantity: 1 }),
-      });
-    } catch (error) {
-      console.error("Erreur synchronisation panier:", error);
-    }
+    fetch("/api/cart", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ productId: product.id, quantity: 1 }),
+    }).catch((error) => console.error("Erreur synchronisation panier:", error));
+
+    return true;
   };
 
-  const removeFromCart = async (produitId: number) => {
-    setCart((prev) => prev.filter((item) => item.produit.id !== produitId));
+  const removeFromCart = async (productId: string) => {
+    setCart((prev) => prev.filter((item) => item.product.id !== productId));
 
     try {
       await fetch("/api/cart", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ productId: produitId }),
+        body: JSON.stringify({ productId }),
       });
     } catch (error) {
       console.error("Erreur suppression panier:", error);
     }
   };
 
-  const clearCart = () => {
+  const clearCart = async () => {
     setCart([]);
+    try {
+      await fetch("/api/cart", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ all: true }),
+      });
+    } catch {}
   };
 
-  const cartCount = cart.reduce((sum, item) => sum + item.quantite, 0);
-  
-  const cartTotal = cart.reduce((sum, item) => {
-    const price = item.produit.prix ?? (item.produit as any).price ?? 0;
-    return sum + price * item.quantite;
-  }, 0);
+  const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+  const cartTotal = cart.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
 
-  const toggleFavorite = (produitId: number) => {
+  const toggleFavorite = (productId: string) => {
     setFavorites((prev) =>
-      prev.includes(produitId) ? prev.filter((id) => id !== produitId) : [...prev, produitId]
+      prev.includes(productId) ? prev.filter((id) => id !== productId) : [...prev, productId]
     );
   };
 
-  const isFavorite = (produitId: number) => favorites.includes(produitId);
+  const isFavorite = (productId: string) => favorites.includes(productId);
   const favoritesCount = favorites.length;
 
   return (
@@ -124,6 +132,7 @@ export function ShopProvider({ children }: { children: ReactNode }) {
       value={{ cart, addToCart, removeFromCart, clearCart, cartCount, cartTotal, favorites, toggleFavorite, isFavorite, favoritesCount }}
     >
       {children}
+      <AuthRequiredModal open={authModalOpen} onClose={() => setAuthModalOpen(false)} />
     </ShopContext.Provider>
   );
 }

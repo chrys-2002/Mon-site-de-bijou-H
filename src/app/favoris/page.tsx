@@ -4,6 +4,7 @@ import { useShop } from "@/context/ShopContext";
 import ProductCard from "@/components/ProductCard";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { HeartIcon } from "@/components/icons";
 
 export default function FavorisPage() {
   const { favorites } = useShop();
@@ -25,7 +26,7 @@ export default function FavorisPage() {
   return (
     <main className="min-h-screen pt-20 bg-[var(--bg)]">
       <div className="max-w-7xl mx-auto px-4 py-12">
-        <h1 className="text-4xl font-bold mb-4">❤️ Mes Favoris</h1>
+        <h1 className="text-4xl font-bold mb-4">Mes Favoris</h1>
         <p className="text-[var(--text-secondary)] mb-8">{favorisProduits.length} produit(s)</p>
 
         {loading ? (
@@ -38,7 +39,9 @@ export default function FavorisPage() {
           </div>
         ) : (
           <div className="glass rounded-2xl p-12 text-center">
-            <span className="text-6xl mb-6 block">🤍</span>
+            <div className="w-16 h-16 mx-auto mb-6 rounded-2xl flex items-center justify-center border border-[#e8c47a]/30 text-[#e8c47a] bg-[#e8c47a]/5">
+              <HeartIcon className="w-8 h-8" />
+            </div>
             <h2 className="text-2xl font-bold mb-4">Aucun favori</h2>
             <Link href="/collection" className="inline-block bg-[var(--text)] text-[var(--bg)] px-8 py-3 rounded-full font-semibold">
               Découvrir la collection

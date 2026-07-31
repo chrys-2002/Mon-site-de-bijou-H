@@ -4,6 +4,7 @@ import { useShop } from "@/context/ShopContext";
 import { formatCFA } from "@/lib/utils";
 import Link from "next/link";
 import { useState } from "react";
+import { CheckCircleIcon, WaveIcon, CardIcon } from "@/components/icons";
 
 export default function CheckoutPage() {
   const { cart, cartTotal, clearCart } = useShop();
@@ -15,7 +16,9 @@ export default function CheckoutPage() {
     return (
       <main className="min-h-screen pt-20 flex items-center justify-center bg-[var(--bg)]">
         <div className="text-center glass rounded-2xl p-12 max-w-md mx-4">
-          <span className="text-7xl mb-6 block">✅</span>
+          <div className="w-20 h-20 mx-auto mb-6 rounded-2xl flex items-center justify-center border border-[#e8c47a]/30 text-[#e8c47a] bg-[#e8c47a]/5">
+            <CheckCircleIcon className="w-10 h-10" />
+          </div>
           <h1 className="text-3xl font-bold mb-4">Commande confirmée !</h1>
           <p className="text-[var(--text-secondary)] mb-8">Merci pour votre achat. Vous recevrez une confirmation par SMS.</p>
           <Link href="/collection" className="inline-block bg-[var(--text)] text-[var(--bg)] px-8 py-3 rounded-full font-semibold hover:opacity-80 transition">
@@ -44,16 +47,12 @@ export default function CheckoutPage() {
 
         <div className="glass rounded-2xl p-6 mb-8">
           <h2 className="text-lg font-semibold mb-4">Résumé de la commande</h2>
-          {cart.map((item) => {
-            const nom = item.produit.nom || (item.produit as any).name;
-            const prix = item.produit.prix ?? (item.produit as any).price ?? 0;
-            return (
-              <div key={item.produit.id} className="flex justify-between py-2 border-b border-[var(--border)]">
-                <span>{nom} × {item.quantite}</span>
-                <span>{formatCFA(prix * item.quantite)}</span>
-              </div>
-            );
-          })}
+          {cart.map((item) => (
+            <div key={item.product.id} className="flex justify-between py-2 border-b border-[var(--border)]">
+              <span>{item.product.name} × {item.quantity}</span>
+              <span>{formatCFA(item.product.price * item.quantity)}</span>
+            </div>
+          ))}
           <div className="flex justify-between font-bold text-lg mt-4 pt-4 border-t border-[var(--border)]">
             <span>Total</span>
             <span>{formatCFA(cartTotal)}</span>
@@ -66,8 +65,8 @@ export default function CheckoutPage() {
           {[
             { id: "orange", label: "Orange Money", color: "orange", icon: "OM" },
             { id: "mtn", label: "MTN Mobile Money", color: "yellow", icon: "MoMo" },
-            { id: "wave", label: "Wave", color: "blue", icon: "🌊" },
-            { id: "card", label: "Carte bancaire", color: "green", icon: "💳" },
+            { id: "wave", label: "Wave", color: "blue", icon: <WaveIcon className="w-5 h-5" /> },
+            { id: "card", label: "Carte bancaire", color: "green", icon: <CardIcon className="w-5 h-5" /> },
           ].map((method) => (
             <label
               key={method.id}

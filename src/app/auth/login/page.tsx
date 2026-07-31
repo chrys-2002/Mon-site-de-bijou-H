@@ -24,20 +24,13 @@ function LoginForm() {
     setLoading(true);
     setError("");
     try {
-      const res = await fetch("/api/auth/login-email", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-      const data = await res.json();
-      if (res.ok) {
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("user", JSON.stringify(data.user));
-        window.location.href = "/";
+      const res = await signIn("credentials", { email, password, redirect: false });
+      if (res?.error) {
+        setError("Email ou mot de passe incorrect");
       } else {
-        setError(data.error || "Erreur de connexion");
+        window.location.href = "/";
       }
-    } catch (err) {
+    } catch {
       setError("Erreur de connexion au serveur");
     } finally {
       setLoading(false);

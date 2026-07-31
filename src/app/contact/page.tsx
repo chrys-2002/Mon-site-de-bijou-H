@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { CheckCircleIcon } from "@/components/icons";
 
 export default function ContactPage() {
   const [name, setName] = useState("");
@@ -34,7 +35,9 @@ export default function ContactPage() {
     return (
       <main className="min-h-screen pt-20 flex items-center justify-center bg-[var(--bg)]">
         <div className="glass rounded-2xl p-12 text-center max-w-md">
-          <span className="text-6xl mb-6 block">✅</span>
+          <div className="w-16 h-16 mx-auto mb-6 rounded-2xl flex items-center justify-center border border-[#e8c47a]/30 text-[#e8c47a] bg-[#e8c47a]/5">
+              <CheckCircleIcon className="w-8 h-8" />
+            </div>
           <h1 className="text-3xl font-bold mb-4">Message envoyé !</h1>
           <p className="text-[var(--text-secondary)]">Nous vous répondrons dans les plus brefs délais.</p>
         </div>

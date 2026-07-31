@@ -80,7 +80,7 @@ export default function ProduitPage() {
             </div>
             <div className="flex gap-4">
               <button
-                onClick={() => { addToCart(produit); setAdded(true); setTimeout(() => setAdded(false), 1500); }}
+                onClick={() => { if (addToCart(produit)) { setAdded(true); setTimeout(() => setAdded(false), 1500); } }}
                 className={`flex-1 py-4 rounded-full font-semibold text-lg transition ${added ? "bg-green-500 text-white" : "bg-[var(--text)] text-[var(--bg)] hover:opacity-80"}`}
               >
                 {added ? "✓ Ajouté !" : "Ajouter au panier"}
